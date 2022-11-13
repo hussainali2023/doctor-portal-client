@@ -1,5 +1,4 @@
 import React from "react";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 
 const AppointmentOptions = ({ option, setTreatment }) => {
   const { name, slots } = option;
@@ -15,6 +14,7 @@ const AppointmentOptions = ({ option, setTreatment }) => {
         </p>
         <div className="card-actions justify-center">
           <label
+            disabled={slots.length === 0}
             onClick={() => setTreatment(option)}
             htmlFor="booking-modal"
             className="btn btn-primary text-white"

@@ -1,9 +1,29 @@
 import { format } from "date-fns";
 import React from "react";
 
-const BookingModal = ({ treatment, selectedDate }) => {
+const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
   const date = format(selectedDate, "PP");
   const { name, slots } = treatment;
+
+  const handleBooking = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const slot = form.slot.value;
+    const patientName = form.name.value;
+    const email = form.email.value;
+    const phone = form.phone.value;
+    const booking = {
+      appointmentDate: date,
+      treatment: name,
+      patientName,
+      slot,
+      email,
+      phone,
+    };
+    console.log(booking);
+    setTreatment(null);
+  };
+
   return (
     <>
       <input type="checkbox" id="booking-modal" className="modal-toggle" />
@@ -16,7 +36,11 @@ const BookingModal = ({ treatment, selectedDate }) => {
             ✕
           </label>
           <h3 className="text-lg font-bold">{name}</h3>
-          <form action="" className=" grid grid-cols-1 gap-3 mt-10">
+          <form
+            onSubmit={handleBooking}
+            action=""
+            className=" grid grid-cols-1 gap-3 mt-10"
+          >
             <input
               type="text"
               value={date}
@@ -24,20 +48,30 @@ const BookingModal = ({ treatment, selectedDate }) => {
               placeholder="Type here"
               className="input input-bordered w-full"
             />
-            <select className="select select-bordered w-full">
+            <select name="slot" className="select select-bordered w-full">
               <option>Who shot first?</option>
-              {slots.map((slot) => (
-                <option value={slot}>{slot}</option>
+              {slots.map((slot, i) => (
+                <option value={slot} key={i}>
+                  {slot}
+                </option>
               ))}
             </select>
             <input
               type="text"
-              placeholder="Type here"
+              name="name"
+              placeholder="Your Name"
+              className="input input-bordered w-full"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
               className="input input-bordered w-full"
             />
             <input
               type="text"
-              placeholder="Type here"
+              name="phone"
+              placeholder="Phone Number"
               className="input input-bordered w-full"
             />
             <input
