@@ -1,9 +1,12 @@
 import { tr } from "date-fns/locale";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthProvider";
 
 const Login = () => {
+  const { signIn } = useContext(AuthContext);
+  const [loginError, setLoginError] = useState("");
   const {
     register,
     formState: { errors },
@@ -12,6 +15,18 @@ const Login = () => {
 
   const handleLogin = (data) => {
     console.log(data);
+    setLoginError("");
+    signIn(data.email, data.password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        setLoginError(errorMessage);
+      });
   };
   return (
     <div className=" h-[800px] flex justify-center items-center">
@@ -62,6 +77,8 @@ const Login = () => {
             type="submit"
             value={"submit"}
           />
+
+          <div>{loginError && <p>{loginError}</p>}</div>
         </form>
         <p className=" ">
           New to Doctors Portal? &nbsp;
