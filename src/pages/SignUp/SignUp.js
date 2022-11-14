@@ -1,6 +1,7 @@
 import { tr } from "date-fns/locale";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthProvider";
 
@@ -12,6 +13,7 @@ const SignUp = () => {
   } = useForm();
 
   const { createUser, updateUser } = useContext(AuthContext);
+  const [signUpError, setSignUpError] = useState("");
 
   const handleSignUp = (data) => {
     console.log(data);
@@ -19,17 +21,23 @@ const SignUp = () => {
       .then((result) => {
         const user = result.user;
         console.log(user);
+        toast.success("Account created successfuly");
+        setSignUpError("");
         const userInfo = {
           displayName: data.name,
         };
         updateUser(userInfo)
           .then(() => {})
-          .catch((err) => console.error(err));
+          .catch((err) => {
+            console.error(err);
+            setSignUpError(err);
+          });
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
+        setSignUpError(errorMessage);
       });
   };
   return (
@@ -96,6 +104,10 @@ const SignUp = () => {
             type="submit"
             value={"submit"}
           />
+
+          {signUpError && (
+            <p className=" text-red-600 font-semibold">{signUpError}</p>
+          )}
         </form>
         <p className=" ">
           Already Have an Account ? &nbsp;

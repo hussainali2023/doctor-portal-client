@@ -1,12 +1,17 @@
 import { tr } from "date-fns/locale";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthProvider";
 
 const Login = () => {
   const { signIn } = useContext(AuthContext);
   const [loginError, setLoginError] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const from = location.state?.from?.pathname || "/";
   const {
     register,
     formState: { errors },
@@ -20,6 +25,8 @@ const Login = () => {
       .then((result) => {
         const user = result.user;
         console.log(user);
+        toast.success("successfully Login");
+        navigate(from, { replace: true });
       })
       .catch((error) => {
         const errorCode = error.code;
