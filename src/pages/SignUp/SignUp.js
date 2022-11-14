@@ -3,22 +3,35 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
-const Login = () => {
+const SignUp = () => {
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
 
-  const handleLogin = (data) => {
+  const handleSignUp = (data) => {
     console.log(data);
   };
   return (
     <div className=" h-[800px] flex justify-center items-center">
       <div className=" w-96 p-6">
-        <h2 className=" text-xl font-semibold text-center">Login</h2>
-        <form onSubmit={handleSubmit(handleLogin)}>
+        <h2 className=" text-xl font-semibold text-center">SignUp</h2>
+        <form onSubmit={handleSubmit(handleSignUp)}>
           <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Name</span>
+            </label>
+            <input
+              {...register("name", { required: "Name is Required" })}
+              type="text"
+              className="input input-bordered w-full"
+            />
+            {errors.name && (
+              <p className=" text-red-700" role="alert">
+                {errors.name?.message}
+              </p>
+            )}
             <label className="label">
               <span className="label-text">Email</span>
             </label>
@@ -44,13 +57,15 @@ const Login = () => {
                   value: 6,
                   message: "Password must be 6 characters or longer",
                 },
+                pattern: {
+                  value:
+                    /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/,
+                  message: "Password must be strong",
+                },
               })}
               type="password"
               className="input input-bordered w-full"
             />
-            <label className="label">
-              <span className="label-text">Forget Password ?</span>
-            </label>
             {errors.password && (
               <p className=" text-red-700" role="alert">
                 {errors.password?.message}
@@ -64,9 +79,9 @@ const Login = () => {
           />
         </form>
         <p className=" ">
-          New to Doctors Portal? &nbsp;
-          <Link className="text-secondary" to="/signup">
-            Please Sign Up
+          Already Have an Account ? &nbsp;
+          <Link className="text-secondary" to="/login">
+            Please Login
           </Link>
           <div className="divider">OR</div>
           <button className=" btn btn-outline uppercase w-full">
@@ -78,4 +93,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
