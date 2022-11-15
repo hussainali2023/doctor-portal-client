@@ -1,9 +1,14 @@
+import { data } from "autoprefixer";
 import { format } from "date-fns";
-import React from "react";
+import React, { useContext } from "react";
+import toast from "react-hot-toast";
+import { AuthContext } from "../../../context/AuthProvider";
 
 const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
   const date = format(selectedDate, "PP");
   const { name, slots } = treatment;
+
+  const { user } = useContext(AuthContext);
 
   const handleBooking = (e) => {
     e.preventDefault();
@@ -20,8 +25,21 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
       email,
       phone,
     };
-    console.log(booking);
-    setTreatment(null);
+    fetch("http://localhost:5000/bookings", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(booking),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data));
+
+    if (data.acknowledged === true) {
+      toast.success("Booking Confirmed");
+      console.log(booking);
+      setTreatment(null);
+    }
   };
 
   return (
@@ -60,12 +78,16 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
               type="text"
               name="name"
               placeholder="Your Name"
+              defaultValue={user?.displayName}
+              disabled
               className="input input-bordered w-full"
             />
             <input
               type="email"
               name="email"
               placeholder="Email Address"
+              defaultValue={user?.email}
+              disabled
               className="input input-bordered w-full"
             />
             <input
