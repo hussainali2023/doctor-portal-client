@@ -2,7 +2,6 @@ import { data } from "autoprefixer";
 import { format } from "date-fns";
 import React, { useContext } from "react";
 import toast from "react-hot-toast";
-import swal from "sweetalert";
 import { AuthContext } from "../../../context/AuthProvider";
 
 const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
@@ -34,15 +33,17 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
       body: JSON.stringify(booking),
     })
       .then((res) => res.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        console.log(data);
 
-    if ((data.acknowledged = true)) {
-      toast.success("Booking Confirmed");
-      swal("Good job!", "Booking Confirmed!", "success");
-      console.log(booking);
-      setTreatment(null);
-      refetch();
-    }
+        if (data.acknowledged) {
+          setTreatment(null);
+          toast.success("Booking Confirmed");
+          refetch();
+        } else {
+          toast.error(data.message);
+        }
+      });
   };
 
   return (
