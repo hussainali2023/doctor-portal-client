@@ -2,9 +2,10 @@ import { data } from "autoprefixer";
 import { format } from "date-fns";
 import React, { useContext } from "react";
 import toast from "react-hot-toast";
+import swal from "sweetalert";
 import { AuthContext } from "../../../context/AuthProvider";
 
-const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
+const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
   const date = format(selectedDate, "PP");
   const { name, slots } = treatment;
 
@@ -35,10 +36,12 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
       .then((res) => res.json())
       .then((data) => console.log(data));
 
-    if (data.acknowledged === true) {
+    if ((data.acknowledged = true)) {
       toast.success("Booking Confirmed");
+      swal("Good job!", "Booking Confirmed!", "success");
       console.log(booking);
       setTreatment(null);
+      refetch();
     }
   };
 
@@ -67,7 +70,6 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
               className="input input-bordered w-full"
             />
             <select name="slot" className="select select-bordered w-full">
-              <option>Who shot first?</option>
               {slots.map((slot, i) => (
                 <option value={slot} key={i}>
                   {slot}
