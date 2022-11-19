@@ -1,9 +1,22 @@
 import { async } from "@firebase/util";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import ConfirmationModal from "../../Shared/ConfirmationModal/ConfirmationModal";
+import Loading from "../../Shared/Loading/Loading";
 
 const ManageDoctors = () => {
-  const { data: doctors } = useQuery({
+  const [deletingDoctor, setDeletingDoctor] = useState(null);
+
+  const closeModal = () => {
+    setDeletingDoctor(null);
+  };
+
+  const {
+    data: doctors,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["doctors"],
     queryFn: async () => {
       try {
@@ -19,7 +32,27 @@ const ManageDoctors = () => {
       }
     },
   });
-  console.log(doctors);
+
+  const handleDeleteDoctor = (doctor) => {
+    fetch(`http://localhost:5000/doctors/${doctor._id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `bearar ${localStorage.getItem("AccessTokekn")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.deletedCount > 0) {
+          refetch();
+          toast.success(`Doctor ${doctor.name} deleted successfully`);
+        }
+      });
+  };
+
+  if (isLoading) {
+    return <Loading></Loading>;
+  }
+
   return (
     <div>
       <h1 className=" text-5xl text-center">
@@ -31,6 +64,7 @@ const ManageDoctors = () => {
           {/* <!-- head --> */}
           <thead>
             <tr>
+              <th></th>
               <th>Avatar</th>
               <th>Name</th>
               <th>Email</th>
@@ -54,12 +88,30 @@ const ManageDoctors = () => {
                 <td>{doctor.name}</td>
                 <td>{doctor.email}</td>
                 <td>{doctor.specialty}</td>
-                <td>Blue</td>
+                <td>
+                  <label
+                    onClick={() => setDeletingDoctor(doctor)}
+                    htmlFor="confirmation-modal"
+                    className="btn btn-error"
+                  >
+                    Delete
+                  </label>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {deletingDoctor && (
+        <ConfirmationModal
+          title={`Are you sure You want to Delete ${deletingDoctor.name}`}
+          message={`If you delete ${deletingDoctor.name}. It cannot be undone`}
+          closeModal={closeModal}
+          successAction={handleDeleteDoctor}
+          successButtonName="Delete"
+          modalData={deletingDoctor}
+        ></ConfirmationModal>
+      )}
     </div>
   );
 };
