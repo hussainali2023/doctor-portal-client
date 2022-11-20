@@ -37,7 +37,7 @@ const ManageDoctors = () => {
     fetch(`http://localhost:5000/doctors/${doctor._id}`, {
       method: "DELETE",
       headers: {
-        authorization: `bearar ${localStorage.getItem("AccessTokekn")}`,
+        authorization: `bearar ${localStorage.getItem("AccessToken")}`,
       },
     })
       .then((res) => res.json())

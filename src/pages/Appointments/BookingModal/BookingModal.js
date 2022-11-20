@@ -3,10 +3,17 @@ import { format } from "date-fns";
 import React, { useContext } from "react";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../../context/AuthProvider";
+import Loading from "../../Shared/Loading/Loading";
 
-const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
+const BookingModal = ({
+  treatment,
+  selectedDate,
+  setTreatment,
+  isLoading,
+  refetch,
+}) => {
   const date = format(selectedDate, "PP");
-  const { name, slots } = treatment;
+  const { name, slots, price } = treatment;
 
   const { user } = useContext(AuthContext);
 
@@ -24,6 +31,7 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
       slot,
       email,
       phone,
+      price,
     };
     fetch("http://localhost:5000/bookings", {
       method: "POST",
@@ -45,6 +53,10 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
         }
       });
   };
+
+  if (isLoading) {
+    return <Loading></Loading>;
+  }
 
   return (
     <>
@@ -96,6 +108,14 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
             <input
               type="text"
               name="phone"
+              placeholder="Phone Number"
+              className="input input-bordered w-full"
+            />
+            <input
+              type="number"
+              defaultValue={price}
+              disabled
+              name="price"
               placeholder="Phone Number"
               className="input input-bordered w-full"
             />
